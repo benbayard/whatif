@@ -6,16 +6,22 @@ import (
 )
 
 func main() {
+  go h.run()
   http.HandleFunc("/", start)
-  err := http.ListenAndServe("127.0.0.1:3000", nil)
+  http.HandleFunc("/ws", serveWs)
+  log.Print("Starting Server...")
+  err := http.ListenAndServe("127.0.0.1:1337", nil)
   if err != nil {
     log.Fatal("ListenAndServe: ", err)
   }
-  // http.HandleFunc("/ws", serveWs)
 }
 
 func start(writer http.ResponseWriter, reader *http.Request) {
+  log.Println(reader.URL.Path)
   if reader.URL.Path != "/" {
+    if reader.URL.Path == "/application.js" {
+      http.ServeFile(writer, reader, "assets/application.js")
+    }
     http.Error(writer, "Not found", 404)
     return
   }
