@@ -33,16 +33,16 @@ type connection struct {
 }
 
 type Coord struct {
-  x float64
-  y float64
+  X float64 `json: x`
+  Y float64 `json: y`
 }
 
 type CoordList struct {
-  coordPairs []CoordPair
+  CoordPairs []CoordPair 
 }
 
 type CoordPair struct {
-  coords []Coord
+  Coords []Coord
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -56,15 +56,15 @@ func (c *connection) readPump() {
   c.ws.SetPongHandler(func(string) error { c.ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
   for {
     _, message, err := c.ws.ReadMessage()
-    log.Print(string(message[:]))
+    log.Print(string(message))
     if err != nil {
       break
     } else {
       fetch := &CoordPair{}
-      err   := json.Unmarshal(message, &fetch)
+      err   := json.Unmarshal(message, fetch)
       if err != nil {
         log.Print("There was an error")
-        log.Print(err.Error)
+        log.Print(err.Error())
       }
       if fetch == nil {
         log.Print("WHY DO YOU HATE ME")
