@@ -45,6 +45,16 @@ type CoordPair struct {
   Coords []Coord
 }
 
+type Solution struct {
+  totalDistance float64
+  points        [][]Coords
+}
+
+type Travel struct {
+  the_distance float64
+  position     []int
+}
+
 // readPump pumps messages from the websocket connection to the hub.
 func (c *connection) readPump() {
   defer func() {
@@ -60,8 +70,22 @@ func (c *connection) readPump() {
     if err != nil {
       break
     } else {
-      fetch := &CoordPair{}
-      err   := json.Unmarshal(message, fetch)
+      fetch := [][]Coord{}
+      err   := json.Unmarshal(message, &fetch)
+
+      solutions := []Solution  
+      for i := 0; i < len(fetch); i++ {
+        // fetch[i]
+        solution := &Solution{
+          totalDistance: 0,
+          points: make([][]Coords, 4,4)
+        }  
+        solution.points[0] = fetch[0]
+        pathSolved := false
+        for j := 0; j < 4; j++ {
+          distances := []Travel
+        }
+      }
       if err != nil {
         log.Print("There was an error")
         log.Print(err.Error())

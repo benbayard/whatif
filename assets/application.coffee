@@ -101,7 +101,7 @@ smallestDistance = () ->
     solution = 
       totalDistance: 0
       points: [paths[currentPos[0]][currentPos[1]]]
-    (i == paths.length - 1) ? last = true : last = false
+    # (i == paths.length - 1) ? last = true : last = false
     # until pathSolved
     pathSolved = false
     until pathSolved

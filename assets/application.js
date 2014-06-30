@@ -102,7 +102,7 @@
   };
 
   smallestDistance = function() {
-    var currentPath, currentPoint, currentPos, distances, i, initialPos, last, otherPath, pathSolved, solution, solutions, travel, _i, _j, _len, _ref, _ref1;
+    var currentPath, currentPoint, currentPos, distances, i, initialPos, otherPath, pathSolved, solution, solutions, travel, _i, _j, _len, _ref;
     solutions = [];
     for (i = _i = 0, _ref = paths.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
       currentPos = [i, 0];
@@ -110,13 +110,6 @@
       solution = {
         totalDistance: 0,
         points: [paths[currentPos[0]][currentPos[1]]]
-      };
-            if ((_ref1 = i === paths.length - 1) != null) {
-        _ref1;
-      } else {
-        last = {
-          "true": last = false
-        };
       };
       pathSolved = false;
       while (!pathSolved) {
