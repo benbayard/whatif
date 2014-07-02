@@ -6,6 +6,7 @@ import (
   "log"
   "net/http"
   "encoding/json"
+  "math"
 )
 
 const (
@@ -37,22 +38,31 @@ type Coord struct {
   Y float64 `json: y`
 }
 
-type CoordList struct {
-  CoordPairs []CoordPair 
-}
-
-type CoordPair struct {
-  Coords []Coord
-}
-
 type Solution struct {
   totalDistance float64
-  points        [][]Coords
+  points        []Coord
 }
 
 type Travel struct {
-  the_distance float64
+  theDistance float64
   position     []int
+}
+
+// type 
+
+func contains(array []Coord, coord Coord) bool {
+  for i := range array {
+    // this may not be correct
+    // if it is address of, then it will not work
+    if array[i] == coord {
+      return true
+    }
+  }
+  return false
+}
+
+func distance(p1 Coord, p2 Coord) float64 {
+  return math.Abs(math.Sqrt(math.Pow(p2.X - p1.X, 2) + math.Pow(p2.Y - p1.Y, 2)))
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -73,17 +83,65 @@ func (c *connection) readPump() {
       fetch := [][]Coord{}
       err   := json.Unmarshal(message, &fetch)
 
-      solutions := []Solution  
+      solutions := []Solution{}  
       for i := 0; i < len(fetch); i++ {
         // fetch[i]
         solution := &Solution{
           totalDistance: 0,
-          points: make([][]Coords, 4,4)
+          points: make([]Coord, 4),
         }  
-        solution.points[0] = fetch[0]
+        // fetch looks like this:
+        // [
+        //   [
+        //     {
+        //       x: a,
+        //       y: b
+        //     },
+        //     {
+        //       x: c,
+        //       y: d
+        //     }
+        //   ],
+        //   [
+        //     {
+        //       x: e,
+        //       y: f
+        //     },
+        //     {
+        //       x: g,
+        //       y: h
+        //     }
+        //   ]
+        // ]
+        paths := fetch
+        incrementSolution := 0
+        solution.points[0] = paths[i][0]
+        currentPos := []int{i,0}
         pathSolved := false
+        distances  := make([]*Travel, 2)
+
         for j := 0; j < 4; j++ {
-          distances := []Travel
+        // for { 
+          distances[0] = nil
+          distances[1] = nil
+          currentPath := paths[currentPos[0]]
+          if currentPos[0] == (len(paths) - 1) {
+            otherPath := 0
+          } else {
+            otherPath := len(paths) - 1 
+          }
+
+          currentPoint := currentPath[currentPos[1]]
+
+          if (currentPos[1] != (len(currentPath) - 1) && contains(solution.points, paths[currentPos[0]][currentPos[1]+1])) {
+            log.Print("The next point in this line is valid")
+            // travel := 
+            distances[0] = &Travel{
+              theDistance: distance(paths[currentPos[0]][currentPos[1]], paths[currentPos[0]][currentPos[0] + 1]),
+              position:    []int{currentPos[0], currentPos[1] + 1},
+            }
+          }
+          // (true) ? trueThing : falseThing
         }
       }
       if err != nil {
