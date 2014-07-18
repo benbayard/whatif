@@ -3,12 +3,198 @@
     <title>What If?</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   </head>
+
+  <style type="text/css">
+    body {
+      margin: 0px;
+      padding: 0px;
+    }
+    main {
+      padding: 10px;
+    }
+    .transformation-inputs, .results {
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .tritium, .html, .javascript, .tritium-results, .javascript-results {
+      flex: 1;
+      min-width: 300px;
+      height: 300px;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+  </style>
   <body>
     <main>
-      <section class="display-canvas">
+      <section class="transformation-inputs">
+        <textarea class="tritium"># put tritium here
+html_fragment() {
+  $(".//div[@class='demo']") {
+    text("Hello, World!")
+  }
+}
+</textarea>
+        <textarea class="html"><table id="cart-table-standard">
+  <colgroup>
+    <col />
+    <col width="100" />
+    <col width="100" />
+    <col width="50" />
+    <col width="100" />
+  </colgroup>
 
+  <thead>
+    <tr >
+      <th> Name</th>
+
+      <th class="a-center">Description</th>
+
+      <th class="a-center"><span class="nobr">Price</span></th>
+
+      <th class="a-center"><span class="nobr">QTY</span></th>
+
+      <th class="a-center">Amount</th>
+    </tr>
+  </thead>
+
+  <tbody class="standard-items">
+    <tr>
+      <td>
+        <div class="product-details">
+          <a href="#" title="Totally A Thing" class="product-image">Thing 1</a>
+        </div>
+      </td>
+
+      <td class="a-center">A Thing</td>
+
+      <td class="a-center"><span class="price">$21.95&nbsp;per&nbsp;lb.</span></td>
+
+      <td class="a-center">1</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="product-details">
+          <a href="#" title="Totally A Thing" class="product-image">Thing 1</a>
+        </div>
+      </td>
+
+      <td class="a-center">A Thing</td>
+
+      <td class="a-center"><span class="price">$21.95&nbsp;per&nbsp;lb.</span></td>
+
+      <td class="a-center">1</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="product-details">
+          <a href="#" title="Totally A Thing" class="product-image">Thing 1</a>
+        </div>
+      </td>
+
+      <td class="a-center">A Thing</td>
+
+      <td class="a-center"><span class="price">$21.95&nbsp;per&nbsp;lb.</span></td>
+
+      <td class="a-center">1</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="product-details">
+          <a href="#" title="Totally A Thing" class="product-image">Thing 1</a>
+        </div>
+      </td>
+
+      <td class="a-center">A Thing</td>
+
+      <td class="a-center"><span class="price">$21.95&nbsp;per&nbsp;lb.</span></td>
+
+      <td class="a-center">1</td>
+    </tr>
+  </tbody>
+</table>
+</textarea>
+        <textarea class="javascript">// puts javascript here
+var html = document.querySelector(".html").value; 
+var $html = $(html);
+$html.tableDump("potato");
+$html.addClass("demo");
+$html.find(".mw-was-td").wrapTextChildren("<span class='potato'></span>")
+
+$('.javascript-time').html(Date.now() - window.currTime);
+
+return $html.html();</textarea>
+
+      </section>
+      <section class="action-buttons">
+        <button class="transform">Transform</button>
+      </section>
+      <section class="results">
+        <article class="tritium-results-holder">
+          <label>Tritium Results </label>
+          <p> Time taken: <span class='tritium-time'></span></p>
+          <pre class="tritium-results"> </pre>
+        </article>
+
+        <article class="javascript-results-holder">
+          <label>Javascript Results </label>
+          <p> Time taken: <span class='javascript-time'></span></p>
+          <pre class="javascript-results"></pre>
+        </article>
       </section>
     </main>
     <script type="text/javascript" src="/application.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      (function($) {
+        function dumpTag() {
+          var oldTag = this.tagName;
+          var $newTag = $(this).addClass("mw-was-" + oldTag.toLowerCase());
+          $newTag.replaceWith(function() {
+            var attributes = "";
+            $.each($newTag[0].attributes, function(i, attr) {
+              // toEl.attr(attr.name, attr.value);
+              attributes = attributes + " " + attr.name + '="' + attr.value + '"';
+            });
+
+            return "<div" + attributes + ">" + $newTag.html() + "</div>";
+          });
+        }
+
+        $.fn.wrapTextChildren = function(wrapper) {
+          this.each(function() {
+            $(this).contents().filter(function() {return this.nodeType === 3}).wrap(wrapper).parent().filter(function() {
+              return ! $.trim($(this).text());
+            }).remove();
+          });
+          return this;
+        }
+
+        $.fn.tableDump = function() {
+          this.filter("table").each(function() {
+            $this = $(this);
+            /* so here's what we need to do:
+             1) get all attributes from table, and replace it with a div with all those attributes. 
+             2) DO THE SAME FOR EACH CHILD down to a td, or th! 
+            */
+
+            // list of table elements I care about.
+            var tableElements = "thead, tbody, tfoot, tr, td, th"
+
+            var bottom = "td, th";
+            var middle = "tr";
+            var top    = "thead, tbody, tfoot, colgroup";
+            var tiptop = "table"
+
+            // $this.find(tableElements).each(dumpTag);
+            $this.find(bottom).each(dumpTag);
+            $this.find(middle).each(dumpTag);
+            $this.find(top).each(dumpTag);
+            $this.each(dumpTag);
+
+          });
+          return this;
+        };
+      }(jQuery));
+    </script>
   </body>
 </html>

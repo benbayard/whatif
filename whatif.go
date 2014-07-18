@@ -3,20 +3,19 @@ package main
 import (
   "log"
   "net/http"
-  "tritium_oss"
 )
 
 func main() {
   go h.run()
   http.HandleFunc("/", start)
   http.HandleFunc("/ws", serveWs)
+
   log.Print("Starting Server...")
   err := http.ListenAndServe("127.0.0.1:1337", nil)
+
   if err != nil {
     log.Fatal("ListenAndServe: ", err)
   }
-  html := tritium.Transform("html(){$('/html'){add_class('ptoato')}}", "<html></html>")
-  log.Print(html)
 }
 
 func start(writer http.ResponseWriter, reader *http.Request) {

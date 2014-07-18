@@ -5,7 +5,8 @@ import (
   "time"
   "log"
   "net/http"
-  "math"
+  "tritium_oss/tr"
+  "encoding/json"
 )
 
 const (
@@ -32,37 +33,11 @@ type connection struct {
   send chan []byte
 }
 
-type Coord struct {
-  X float64 `json: x`
-  Y float64 `json: y`
+type transformer struct {
+  Tritium string `json: tritium`
+  Html    string `json: html`
 }
 
-type Solution struct {
-  totalDistance float64
-  points        []Coord
-}
-
-type Travel struct {
-  theDistance float64
-  position     []int
-}
-
-// type 
-
-func contains(array []Coord, coord Coord) bool {
-  for i := range array {
-    // this may not be correct
-    // if it is address of, then it will not work
-    if array[i] == coord {
-      return true
-    }
-  }
-  return false
-}
-
-func distance(p1 Coord, p2 Coord) float64 {
-  return math.Abs(math.Sqrt(math.Pow(p2.X - p1.X, 2) + math.Pow(p2.Y - p1.Y, 2)))
-}
 
 // readPump pumps messages from the websocket connection to the hub.
 func (c *connection) readPump() {
@@ -73,87 +48,28 @@ func (c *connection) readPump() {
   c.ws.SetReadLimit(maxMessageSize)
   c.ws.SetReadDeadline(time.Now().Add(pongWait))
   c.ws.SetPongHandler(func(string) error { c.ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
-  // for {
-  //   _, message, err := c.ws.ReadMessage()
-  //   log.Print(string(message))
-  //   if err != nil {
-  //     break
-  //   } else {
-  //     fetch := [][]Coord{}
-  //     err   := json.Unmarshal(message, &fetch)
+  for {
+    _, message, err := c.ws.ReadMessage()
+    log.Print(string(message))
+    if err != nil {
+      log.Print("There was an error reading the message")
+      log.Print(err.Error())
+      break
+    } else {
+      fetch := &transformer{}
+      err   := json.Unmarshal(message, fetch)
+      if err != nil {
+        log.Print("There was an error")
+        log.Print(err.Error())
+      }
+      if fetch == nil {
+        log.Print("WHY DO YOU HATE ME")
+      }
+      html := tritium.Transform(fetch.Tritium, fetch.Html)
+      h.broadcast <- []byte(html)
 
-  //     solutions := []Solution{}  
-  //     for i := 0; i < len(fetch); i++ {
-  //       // fetch[i]
-  //       solution := &Solution{
-  //         totalDistance: 0,
-  //         points: make([]Coord, 4),
-  //       }  
-  //       // fetch looks like this:
-  //       // [
-  //       //   [
-  //       //     {
-  //       //       x: a,
-  //       //       y: b
-  //       //     },
-  //       //     {
-  //       //       x: c,
-  //       //       y: d
-  //       //     }
-  //       //   ],
-  //       //   [
-  //       //     {
-  //       //       x: e,
-  //       //       y: f
-  //       //     },
-  //       //     {
-  //       //       x: g,
-  //       //       y: h
-  //       //     }
-  //       //   ]
-  //       // ]
-  //       paths := fetch
-  //       incrementSolution := 0
-  //       solution.points[0] = paths[i][0]
-  //       currentPos := []int{i,0}
-  //       pathSolved := false
-  //       distances  := make([]*Travel, 2)
-
-  //       for j := 0; j < 4; j++ {
-  //       // for { 
-  //         distances[0] = nil
-  //         distances[1] = nil
-  //         currentPath := paths[currentPos[0]]
-  //         if currentPos[0] == (len(paths) - 1) {
-  //           otherPath := 0
-  //         } else {
-  //           otherPath := len(paths) - 1 
-  //         }
-
-  //         currentPoint := currentPath[currentPos[1]]
-
-  //         if (currentPos[1] != (len(currentPath) - 1) && contains(solution.points, paths[currentPos[0]][currentPos[1]+1])) {
-  //           log.Print("The next point in this line is valid")
-  //           // travel := 
-  //           distances[0] = &Travel{
-  //             theDistance: distance(paths[currentPos[0]][currentPos[1]], paths[currentPos[0]][currentPos[0] + 1]),
-  //             position:    []int{currentPos[0], currentPos[1] + 1},
-  //           }
-  //         }
-  //         // (true) ? trueThing : falseThing
-  //       }
-  //     }
-  //     if err != nil {
-  //       log.Print("There was an error")
-  //       log.Print(err.Error())
-  //     }
-  //     if fetch == nil {
-  //       log.Print("WHY DO YOU HATE ME")
-  //     }
-  //     h.broadcast <- message
-
-  //   }
-  // }
+    }
+  }
 }
 
 // write writes a message with the given message type and payload.
