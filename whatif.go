@@ -3,6 +3,7 @@ package main
 import (
   "log"
   "net/http"
+  "tritium_oss"
 )
 
 func main() {
@@ -14,6 +15,8 @@ func main() {
   if err != nil {
     log.Fatal("ListenAndServe: ", err)
   }
+  html := tritium.Transform("html(){$('/html'){add_class('ptoato')}}", "<html></html>")
+  log.Print(html)
 }
 
 func start(writer http.ResponseWriter, reader *http.Request) {
