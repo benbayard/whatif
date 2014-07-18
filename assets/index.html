@@ -29,19 +29,25 @@
       <section class="transformation-inputs">
         <textarea class="tritium"># put tritium here
 html_fragment() {
-  $(".//div[@class='demo']") {
-    text("Hello, World!")
+$("./table") {
+    name("div")
+    add_class("mw_was_table")
+
+    $(".//tr | .//td | .//th | .//thead |.//tbody") {
+      %i = index()
+      %n = name()
+      name("div")
+      attributes(data-mw-id: concat("mw_dump_", %n, %i), width: "")
+      add_class(concat("mw_was_", %n))
+    }
+
+    $(".//div[contains(@class,'mw-was-td')]")  {
+      add_class("potato")
+    }
   }
 }
 </textarea>
         <textarea class="html"><table id="cart-table-standard">
-  <colgroup>
-    <col />
-    <col width="100" />
-    <col width="100" />
-    <col width="50" />
-    <col width="100" />
-  </colgroup>
 
   <thead>
     <tr >
@@ -132,13 +138,13 @@ return $html.html();</textarea>
         <article class="tritium-results-holder">
           <label>Tritium Results </label>
           <p> Time taken: <span class='tritium-time'></span></p>
-          <pre class="tritium-results"> </pre>
+          <textarea readonly class="tritium-results"> </textarea>
         </article>
 
         <article class="javascript-results-holder">
           <label>Javascript Results </label>
           <p> Time taken: <span class='javascript-time'></span></p>
-          <pre class="javascript-results"></pre>
+          <textarea readonly class="javascript-results"></textarea>
         </article>
       </section>
     </main>

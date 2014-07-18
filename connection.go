@@ -20,7 +20,7 @@ const (
   pingPeriod = (pongWait * 9) / 10
 
   // Maximum message size allowed from peer.
-  maxMessageSize = 512
+  maxMessageSize = 4096
 )
 
 var upgrader = websocket.Upgrader{
@@ -49,8 +49,9 @@ func (c *connection) readPump() {
   c.ws.SetReadDeadline(time.Now().Add(pongWait))
   c.ws.SetPongHandler(func(string) error { c.ws.SetReadDeadline(time.Now().Add(pongWait)); return nil })
   for {
+    currTime := time.Now().Unix()
     _, message, err := c.ws.ReadMessage()
-    log.Print(string(message))
+    // log.Print(string(message))
     if err != nil {
       log.Print("There was an error reading the message")
       log.Print(err.Error())
@@ -67,7 +68,7 @@ func (c *connection) readPump() {
       }
       html := tritium.Transform(fetch.Tritium, fetch.Html)
       h.broadcast <- []byte(html)
-
+      log.Print(time.Now().Unix() - currTime)
     }
   }
 }

@@ -17,6 +17,9 @@
     tritium = document.querySelector(".tritium").value;
     html = document.querySelector(".html").value;
     javascript = document.querySelector(".javascript").value;
+    $(".javascript-results, .tritium-results").each(function() {
+      return this.innerHTML = '';
+    });
     data = {
       tritium: tritium,
       html: html

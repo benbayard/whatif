@@ -16,7 +16,8 @@ document.querySelector(".transform").addEventListener "click", ->
   html       = document.querySelector(".html").value
   javascript = document.querySelector(".javascript").value
 
-  document.querySelector(".results").find(".javascript-results, .tritium-results").each(function() {this.innerHTML = ''})
+  $(".javascript-results, .tritium-results").each ->
+    this.innerHTML = ''
 
   data =     
     tritium: tritium
